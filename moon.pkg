@@ -1,0 +1,3 @@
+import {
+  "hiroyannnn/sketch/lib" @lib,
+}
