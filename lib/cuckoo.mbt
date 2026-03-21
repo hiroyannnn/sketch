@@ -14,14 +14,10 @@ pub struct CuckooFilter {
 
 ///|
 fn next_power_of_two(n : Int) -> Int {
-  if n <= 1 {
+  if n <= 0 {
     return 1
   }
-  let mut p = 1
-  while p < n {
-    p = p * 2
-  }
-  p
+  n.next_power_of_two()
 }
 
 ///|
@@ -34,7 +30,7 @@ fn cf_fingerprint(value : String) -> Int {
 fn cf_alt_bucket(idx : Int, fp : Int, num_buckets : Int) -> Int {
   // Mix the fingerprint with a constant and XOR with the current index.
   // num_buckets is always a power of two so AND-masking is safe.
-  idx.lxor((fp * 1540483477).lsr(1).land(num_buckets - 1))
+  idx.lxor(lsr32(fp * 1540483477, 1).land(num_buckets - 1))
 }
 
 ///|
@@ -92,7 +88,7 @@ pub fn CuckooFilter::new(
 ) -> CuckooFilter {
   let nb = if capacity / bucket_size > 0 { capacity / bucket_size } else { 1 }
   let num_buckets = next_power_of_two(nb)
-  let buckets : Array[Array[Int]] = []
+  let buckets : Array[Array[Int]] = Array::new()
   for i = 0; i < num_buckets; i = i + 1 {
     buckets.push(Array::make(bucket_size, 0))
   }
@@ -104,7 +100,7 @@ pub fn CuckooFilter::new(
 /// the filter is too full to relocate fingerprints.
 pub fn CuckooFilter::insert(self : CuckooFilter, value : String) -> Bool {
   let fp = cf_fingerprint(value)
-  let h = murmurhash3(value).lsr(1).land(self.num_buckets - 1)
+  let h = lsr32(murmurhash3(value), 1).land(self.num_buckets - 1)
   let i1 = h
   let i2 = cf_alt_bucket(i1, fp, self.num_buckets)
   if self.bucket_add(i1, fp) {
@@ -141,7 +137,7 @@ pub fn CuckooFilter::insert(self : CuckooFilter, value : String) -> Bool {
 /// positives).
 pub fn CuckooFilter::contains(self : CuckooFilter, value : String) -> Bool {
   let fp = cf_fingerprint(value)
-  let h = murmurhash3(value).lsr(1).land(self.num_buckets - 1)
+  let h = lsr32(murmurhash3(value), 1).land(self.num_buckets - 1)
   let i1 = h
   let i2 = cf_alt_bucket(i1, fp, self.num_buckets)
   self.bucket_has(i1, fp) || self.bucket_has(i2, fp)
@@ -155,7 +151,7 @@ pub fn CuckooFilter::contains(self : CuckooFilter, value : String) -> Bool {
 /// filter state.
 pub fn CuckooFilter::remove(self : CuckooFilter, value : String) -> Bool {
   let fp = cf_fingerprint(value)
-  let h = murmurhash3(value).lsr(1).land(self.num_buckets - 1)
+  let h = lsr32(murmurhash3(value), 1).land(self.num_buckets - 1)
   let i1 = h
   let i2 = cf_alt_bucket(i1, fp, self.num_buckets)
   if self.bucket_del(i1, fp) {

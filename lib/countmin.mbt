@@ -20,7 +20,7 @@ pub fn CountMinSketch::new(
   width~ : Int = 1000,
   depth~ : Int = 5
 ) -> CountMinSketch {
-  let table : Array[Array[Int]] = []
+  let table : Array[Array[Int]] = Array::new()
   for i = 0; i < depth; i = i + 1 {
     table.push(Array::make(width, 0))
   }
@@ -29,7 +29,7 @@ pub fn CountMinSketch::new(
 
 ///|
 fn cms_col(hash : Int, width : Int) -> Int {
-  hash.lsr(1) % width
+  lsr32(hash, 1) % width
 }
 
 ///|

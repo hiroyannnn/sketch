@@ -21,13 +21,13 @@ pub fn HyperLogLog::new(precision~ : Int = 14) -> HyperLogLog raise SketchError 
   if precision < 4 || precision > 18 {
     raise InvalidPrecision
   }
-  let m = 1.lsl(precision)
+  let m = 1 << precision
   { registers: Array::make(m, 0), precision }
 }
 
 ///|
 fn hll_rank(hash : Int, precision : Int) -> Int {
-  let w = hash.lsr(precision)
+  let w = lsr32(hash, precision)
   if w == 0 {
     32 - precision + 1
   } else {
@@ -54,7 +54,7 @@ pub fn HyperLogLog::count(self : HyperLogLog) -> Double {
   let m_f = m.to_double()
   let mut sum = 0.0
   for i in 0..<m {
-    sum += 1.0 / (1.lsl(self.registers[i])).to_double()
+    sum += 1.0 / (1 << self.registers[i]).to_double()
   }
   let alpha = match m {
     16 => 0.673
