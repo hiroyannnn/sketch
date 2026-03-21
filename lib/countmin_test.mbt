@@ -36,7 +36,7 @@ test "countmin/merge success" {
   let cm2 = CountMinSketch::new()
   cm1.add("x", count=4)
   cm2.add("x", count=6)
-  let merged = (try? cm1.merge(cm2)).unwrap()
+  let merged = try! cm1.merge(cm2)
   inspect(merged.estimate("x"), content="10")
 }
 
