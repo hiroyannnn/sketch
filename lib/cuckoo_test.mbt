@@ -55,6 +55,7 @@ test "cuckoo/many inserts" {
       inserted = inserted + 1
     }
   }
+  // 500 inserts into capacity=2048: load ~24%, expect near 100% success
   assert_true(inserted > 490)
   // All inserted items should be found
   let mut found = 0
