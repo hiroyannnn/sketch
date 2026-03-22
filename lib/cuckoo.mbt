@@ -97,10 +97,15 @@ fn CuckooFilter::bucket_del(
 ///
 /// * `capacity` — approximate maximum number of items (default 1024).
 /// * `bucket_size` — fingerprints per bucket (default 4).
+///
+/// Returns `Err(InvalidDimension)` when `capacity` or `bucket_size` is not positive.
 pub fn CuckooFilter::new(
   capacity? : Int = 1024,
   bucket_size? : Int = 4,
-) -> CuckooFilter {
+) -> CuckooFilter raise SketchError {
+  if capacity <= 0 || bucket_size <= 0 {
+    raise InvalidDimension
+  }
   let nb = if capacity / bucket_size > 0 { capacity / bucket_size } else { 1 }
   let num_buckets = next_power_of_two(nb)
   let buckets : Array[Array[Int]] = Array::new()
