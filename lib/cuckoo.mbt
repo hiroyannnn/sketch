@@ -11,7 +11,7 @@ pub struct CuckooFilter {
   priv num_buckets : Int
   priv mut size : Int
   priv mut rng_state : Int // xorshift32 state for randomized kick-out
-}
+} derive(Show)
 
 ///|
 /// xorshift32 PRNG — advances internal state and returns a pseudo-random Int.
