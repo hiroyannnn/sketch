@@ -6,10 +6,21 @@
 ///|
 /// A Cuckoo Filter for approximate set membership testing.
 pub struct CuckooFilter {
-  buckets : Array[Array[Int]]
-  bucket_size : Int
-  num_buckets : Int
-  mut size : Int
+  priv buckets : Array[Array[Int]]
+  priv bucket_size : Int
+  priv num_buckets : Int
+  priv mut size : Int
+  priv mut rng_state : Int // xorshift32 state for randomized kick-out
+}
+
+///|
+/// xorshift32 PRNG — advances internal state and returns a pseudo-random Int.
+fn xorshift32(state : Int) -> Int {
+  let mut s = state
+  s = s.lxor(s << 13)
+  s = s.lxor(lsr32(s, 17))
+  s = s.lxor(s << 5)
+  s
 }
 
 ///|
@@ -23,7 +34,11 @@ fn next_power_of_two(n : Int) -> Int {
 ///|
 fn cf_fingerprint(value : String) -> Int {
   let raw = murmurhash3(value).land(255)
-  if raw == 0 { 1 } else { raw }
+  if raw == 0 {
+    1
+  } else {
+    raw
+  }
 }
 
 ///|
@@ -37,7 +52,7 @@ fn cf_alt_bucket(idx : Int, fp : Int, num_buckets : Int) -> Int {
 fn CuckooFilter::bucket_add(
   self : CuckooFilter,
   bucket : Int,
-  fp : Int
+  fp : Int,
 ) -> Bool {
   for j in 0..<self.bucket_size {
     if self.buckets[bucket][j] == 0 {
@@ -52,7 +67,7 @@ fn CuckooFilter::bucket_add(
 fn CuckooFilter::bucket_has(
   self : CuckooFilter,
   bucket : Int,
-  fp : Int
+  fp : Int,
 ) -> Bool {
   for j in 0..<self.bucket_size {
     if self.buckets[bucket][j] == fp {
@@ -66,7 +81,7 @@ fn CuckooFilter::bucket_has(
 fn CuckooFilter::bucket_del(
   self : CuckooFilter,
   bucket : Int,
-  fp : Int
+  fp : Int,
 ) -> Bool {
   for j in 0..<self.bucket_size {
     if self.buckets[bucket][j] == fp {
@@ -83,8 +98,8 @@ fn CuckooFilter::bucket_del(
 /// * `capacity` — approximate maximum number of items (default 1024).
 /// * `bucket_size` — fingerprints per bucket (default 4).
 pub fn CuckooFilter::new(
-  capacity~ : Int = 1024,
-  bucket_size~ : Int = 4
+  capacity? : Int = 1024,
+  bucket_size? : Int = 4,
 ) -> CuckooFilter {
   let nb = if capacity / bucket_size > 0 { capacity / bucket_size } else { 1 }
   let num_buckets = next_power_of_two(nb)
@@ -92,7 +107,7 @@ pub fn CuckooFilter::new(
   for i = 0; i < num_buckets; i = i + 1 {
     buckets.push(Array::make(bucket_size, 0))
   }
-  { buckets, bucket_size, num_buckets, size: 0 }
+  { buckets, bucket_size, num_buckets, size: 0, rng_state: 362436069 }
 }
 
 ///|
@@ -111,11 +126,12 @@ pub fn CuckooFilter::insert(self : CuckooFilter, value : String) -> Bool {
     self.size = self.size + 1
     return true
   }
-  // Kick-out relocation (up to 500 iterations)
+  // Kick-out relocation (up to 500 iterations) with randomized slot selection
   let mut cur_idx = i1
   let mut cur_fp = fp
   for kick = 0; kick < 500; kick = kick + 1 {
-    let slot = kick % self.bucket_size
+    self.rng_state = xorshift32(self.rng_state)
+    let slot = lsr32(self.rng_state, 1) % self.bucket_size
     let evicted = self.buckets[cur_idx][slot]
     self.buckets[cur_idx][slot] = cur_fp
     if evicted == 0 {
