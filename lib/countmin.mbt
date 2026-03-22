@@ -33,6 +33,9 @@ pub fn CountMinSketch::new(
 }
 
 ///|
+/// Maps a hash to a column index in [0, width).
+/// `lsr32(hash, 1)` performs an unsigned right shift by 1, clearing the sign
+/// bit so the result is always non-negative. `% width` is therefore safe.
 fn cms_col(hash : Int, width : Int) -> Int {
   lsr32(hash, 1) % width
 }
