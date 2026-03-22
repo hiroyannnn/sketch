@@ -1,7 +1,8 @@
 // MurmurHash3 32-bit — pure MoonBit port of the public-domain algorithm by
 // Austin Appleby. https://github.com/aappleby/smhasher
 
-///| Logical (unsigned) right shift for Int via UInt reinterpretation.
+///|
+/// Logical (unsigned) right shift for Int via UInt reinterpretation.
 fn lsr32(x : Int, n : Int) -> Int {
   (x.reinterpret_as_uint() >> n).reinterpret_as_int()
 }
@@ -28,7 +29,7 @@ fn fmix32(h : Int) -> Int {
 /// `seed` allows generating multiple independent hash functions from the same
 /// key — pass different seed values (e.g. 0, 1, 2 …) to obtain independent
 /// hashes for structures like Count-Min Sketch.
-pub fn murmurhash3(key : String, seed~ : Int = 0) -> Int {
+pub fn murmurhash3(key : String, seed? : Int = 0) -> Int {
   let c1 = -862048943 // 0xcc9e2d51
   let c2 = 461845907 // 0x1b873593
   let chars = key.to_array()
@@ -37,7 +38,8 @@ pub fn murmurhash3(key : String, seed~ : Int = 0) -> Int {
   let mut h = seed
   for i in 0..<nblocks {
     let base = i * 4
-    let mut k = chars[base].to_int()
+    let mut k = chars[base]
+      .to_int()
       .lor(chars[base + 1].to_int() << 8)
       .lor(chars[base + 2].to_int() << 16)
       .lor(chars[base + 3].to_int() << 24)

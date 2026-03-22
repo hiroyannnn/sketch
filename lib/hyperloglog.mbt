@@ -17,7 +17,7 @@ pub struct HyperLogLog {
 /// relative error at the cost of more memory.
 ///
 /// Returns `Err(InvalidPrecision)` when `precision` is outside [4, 18].
-pub fn HyperLogLog::new(precision~ : Int = 14) -> HyperLogLog raise SketchError {
+pub fn HyperLogLog::new(precision? : Int = 14) -> HyperLogLog raise SketchError {
   if precision < 4 || precision > 18 {
     raise InvalidPrecision
   }
@@ -26,6 +26,13 @@ pub fn HyperLogLog::new(precision~ : Int = 14) -> HyperLogLog raise SketchError 
 }
 
 ///|
+/// Computes the rank (position of the first 1-bit) in the upper (32 - precision)
+/// bits of `hash`. The lower `precision` bits are used as the register index.
+///
+/// `w = hash >>> precision` places the relevant bits in [0, 32-precision).
+/// `w.clz()` counts leading zeros over the full 32-bit width, which includes
+/// `precision` extra zero positions — hence we subtract `precision` and add 1.
+/// When `w == 0` all (32 - precision) bits are zero, giving rank = 32 - precision + 1.
 fn hll_rank(hash : Int, precision : Int) -> Int {
   let w = lsr32(hash, precision)
   if w == 0 {
@@ -90,7 +97,7 @@ pub fn HyperLogLog::count(self : HyperLogLog) -> Double {
 /// `Err(PrecisionMismatch)` is returned.
 pub fn HyperLogLog::merge(
   self : HyperLogLog,
-  other : HyperLogLog
+  other : HyperLogLog,
 ) -> HyperLogLog raise SketchError {
   if self.precision != other.precision {
     raise PrecisionMismatch

@@ -1,9 +1,21 @@
 ///|
 test "countmin/invalid dimensions" {
-  inspect(try? CountMinSketch::new(width=0, depth=5), content="Err(InvalidDimension)")
-  inspect(try? CountMinSketch::new(width=100, depth=0), content="Err(InvalidDimension)")
-  inspect(try? CountMinSketch::new(width=-1, depth=5), content="Err(InvalidDimension)")
-  inspect(try? CountMinSketch::new(width=100, depth=-1), content="Err(InvalidDimension)")
+  inspect(
+    try? CountMinSketch::new(width=0, depth=5),
+    content="Err(InvalidDimension)",
+  )
+  inspect(
+    try? CountMinSketch::new(width=100, depth=0),
+    content="Err(InvalidDimension)",
+  )
+  inspect(
+    try? CountMinSketch::new(width=-1, depth=5),
+    content="Err(InvalidDimension)",
+  )
+  inspect(
+    try? CountMinSketch::new(width=100, depth=-1),
+    content="Err(InvalidDimension)",
+  )
 }
 
 ///|

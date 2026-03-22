@@ -34,7 +34,11 @@ fn next_power_of_two(n : Int) -> Int {
 ///|
 fn cf_fingerprint(value : String) -> Int {
   let raw = murmurhash3(value).land(255)
-  if raw == 0 { 1 } else { raw }
+  if raw == 0 {
+    1
+  } else {
+    raw
+  }
 }
 
 ///|
@@ -48,7 +52,7 @@ fn cf_alt_bucket(idx : Int, fp : Int, num_buckets : Int) -> Int {
 fn CuckooFilter::bucket_add(
   self : CuckooFilter,
   bucket : Int,
-  fp : Int
+  fp : Int,
 ) -> Bool {
   for j in 0..<self.bucket_size {
     if self.buckets[bucket][j] == 0 {
@@ -63,7 +67,7 @@ fn CuckooFilter::bucket_add(
 fn CuckooFilter::bucket_has(
   self : CuckooFilter,
   bucket : Int,
-  fp : Int
+  fp : Int,
 ) -> Bool {
   for j in 0..<self.bucket_size {
     if self.buckets[bucket][j] == fp {
@@ -77,7 +81,7 @@ fn CuckooFilter::bucket_has(
 fn CuckooFilter::bucket_del(
   self : CuckooFilter,
   bucket : Int,
-  fp : Int
+  fp : Int,
 ) -> Bool {
   for j in 0..<self.bucket_size {
     if self.buckets[bucket][j] == fp {
@@ -94,8 +98,8 @@ fn CuckooFilter::bucket_del(
 /// * `capacity` — approximate maximum number of items (default 1024).
 /// * `bucket_size` — fingerprints per bucket (default 4).
 pub fn CuckooFilter::new(
-  capacity~ : Int = 1024,
-  bucket_size~ : Int = 4
+  capacity? : Int = 1024,
+  bucket_size? : Int = 4,
 ) -> CuckooFilter {
   let nb = if capacity / bucket_size > 0 { capacity / bucket_size } else { 1 }
   let num_buckets = next_power_of_two(nb)

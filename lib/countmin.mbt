@@ -19,8 +19,8 @@ pub struct CountMinSketch {
 ///
 /// Returns `Err(InvalidDimension)` when `width` or `depth` is not positive.
 pub fn CountMinSketch::new(
-  width~ : Int = 1000,
-  depth~ : Int = 5
+  width? : Int = 1000,
+  depth? : Int = 5,
 ) -> CountMinSketch raise SketchError {
   if width <= 0 || depth <= 0 {
     raise InvalidDimension
@@ -45,7 +45,7 @@ fn cms_col(hash : Int, width : Int) -> Int {
 pub fn CountMinSketch::add(
   self : CountMinSketch,
   value : String,
-  count~ : Int = 1
+  count? : Int = 1,
 ) -> Unit {
   for i in 0..<self.depth {
     let h = cms_col(murmurhash3(value, seed=i), self.width)
@@ -55,10 +55,7 @@ pub fn CountMinSketch::add(
 
 ///|
 /// Returns the estimated frequency of `value`.
-pub fn CountMinSketch::estimate(
-  self : CountMinSketch,
-  value : String
-) -> Int {
+pub fn CountMinSketch::estimate(self : CountMinSketch, value : String) -> Int {
   let mut result = 2147483647
   for i in 0..<self.depth {
     let h = cms_col(murmurhash3(value, seed=i), self.width)
@@ -77,7 +74,7 @@ pub fn CountMinSketch::estimate(
 /// `Err(PrecisionMismatch)` is returned.
 pub fn CountMinSketch::merge(
   self : CountMinSketch,
-  other : CountMinSketch
+  other : CountMinSketch,
 ) -> CountMinSketch raise SketchError {
   if self.width != other.width || self.depth != other.depth {
     raise PrecisionMismatch
