@@ -24,7 +24,7 @@ import {
 ```mbt nocheck
 ///|
 test "HyperLogLog basic" {
-  let hll = (try? @sketch.HyperLogLog::new()).unwrap()
+  let hll = try! @sketch.HyperLogLog::new()
   for i in 0..<1000 {
     hll.add("item-\{i}")
   }
@@ -35,11 +35,11 @@ test "HyperLogLog basic" {
 
 ///|
 test "HyperLogLog merge" {
-  let a = (try? @sketch.HyperLogLog::new()).unwrap()
-  let b = (try? @sketch.HyperLogLog::new()).unwrap()
+  let a = try! @sketch.HyperLogLog::new()
+  let b = try! @sketch.HyperLogLog::new()
   a.add("x")
   b.add("y")
-  let merged = (try? a.merge(b)).unwrap()
+  let merged = try! a.merge(b)
   assert_true(merged.count() >= 1.0)
 }
 
@@ -57,7 +57,7 @@ test "HyperLogLog invalid precision" {
 ```mbt nocheck
 ///|
 test "CountMinSketch basic" {
-  let cm = @sketch.CountMinSketch::new()
+  let cm = try! @sketch.CountMinSketch::new()
   cm.add("apple", count=5)
   cm.add("banana")
   assert_true(cm.estimate("apple") >= 5)
@@ -66,11 +66,11 @@ test "CountMinSketch basic" {
 
 ///|
 test "CountMinSketch merge" {
-  let cm1 = @sketch.CountMinSketch::new()
-  let cm2 = @sketch.CountMinSketch::new()
+  let cm1 = try! @sketch.CountMinSketch::new()
+  let cm2 = try! @sketch.CountMinSketch::new()
   cm1.add("x", count=3)
   cm2.add("x", count=4)
-  let merged = (try? cm1.merge(cm2)).unwrap()
+  let merged = try! cm1.merge(cm2)
   assert_true(merged.estimate("x") >= 7)
 }
 ```
@@ -96,6 +96,7 @@ test "CuckooFilter basic" {
 | Variant | Meaning |
 |---|---|
 | `InvalidPrecision` | HyperLogLog precision outside [4, 18] |
+| `InvalidDimension` | CountMinSketch width or depth is not positive |
 | `PrecisionMismatch` | Merging two sketches with different parameters |
 
 ### HyperLogLog
@@ -111,7 +112,7 @@ test "CuckooFilter basic" {
 
 | Function | Signature | Description |
 |---|---|---|
-| `CountMinSketch::new` | `(width? : Int, depth? : Int) -> CountMinSketch` | Create (default width 1000, depth 5) |
+| `CountMinSketch::new` | `(width? : Int, depth? : Int) -> CountMinSketch raise SketchError` | Create (default width 1000, depth 5) |
 | `add` | `(CountMinSketch, String, count? : Int) -> Unit` | Increment frequency |
 | `estimate` | `(CountMinSketch, String) -> Int` | Query frequency |
 | `merge` | `(CountMinSketch, CountMinSketch) -> CountMinSketch raise SketchError` | Merge two sketches |
