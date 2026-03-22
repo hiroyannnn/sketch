@@ -30,6 +30,7 @@ pub fn CuckooFilter::count(Self) -> Int
 pub fn CuckooFilter::insert(Self, String) -> Bool
 pub fn CuckooFilter::new(capacity? : Int, bucket_size? : Int) -> Self
 pub fn CuckooFilter::remove(Self, String) -> Bool
+pub impl Show for CuckooFilter
 
 pub struct HyperLogLog {
   // private fields

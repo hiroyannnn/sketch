@@ -21,6 +21,7 @@ test "hyperloglog/single element" {
   let hll = try! HyperLogLog::new()
   hll.add("hello")
   let est = hll.count()
+  // Single distinct value — expect estimate near 1.0
   assert_true(est > 0.5 && est < 1.5)
 }
 
@@ -31,6 +32,7 @@ test "hyperloglog/duplicates count as one" {
     hll.add("same")
   }
   let est = hll.count()
+  // All duplicates of one value — cardinality should be ~1
   assert_true(est < 3.0)
 }
 
@@ -41,6 +43,7 @@ test "hyperloglog/cardinality estimate" {
     hll.add("item-\{i}")
   }
   let est = hll.count()
+  // precision=14: standard error ~0.8%, ±10% margin is >12σ (deterministic hash)
   assert_true(est > 900.0 && est < 1100.0)
 }
 
@@ -56,6 +59,7 @@ test "hyperloglog/merge success" {
   }
   let merged = try! hll1.merge(hll2)
   let est = merged.count()
+  // 1000 distinct values across two sketches, ±20% margin
   assert_true(est > 800.0 && est < 1200.0)
 }
 

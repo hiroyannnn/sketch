@@ -56,8 +56,8 @@ pub fn CountMinSketch::add(
 ///|
 /// Returns the estimated frequency of `value`.
 pub fn CountMinSketch::estimate(self : CountMinSketch, value : String) -> Int {
-  let mut result = 2147483647
-  for i in 0..<self.depth {
+  let mut result = self.table[0][cms_col(murmurhash3(value, seed=0), self.width)]
+  for i in 1..<self.depth {
     let h = cms_col(murmurhash3(value, seed=i), self.width)
     let c = self.table[i][h]
     if c < result {
