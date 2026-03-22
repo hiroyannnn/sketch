@@ -28,7 +28,8 @@ jobs:
       - name: Test (all targets)
         run: moon test --target all
 
-      - name: Format check
+      - name: Interface and format check
         run: |
+          moon info
           moon fmt
           git diff --exit-code
