@@ -96,7 +96,7 @@ test "CuckooFilter basic" {
 | Variant | Meaning |
 |---|---|
 | `InvalidPrecision` | HyperLogLog precision outside [4, 18] |
-| `InvalidDimension` | CountMinSketch width or depth is not positive |
+| `InvalidDimension` | width, depth, capacity, or bucket_size is not positive |
 | `PrecisionMismatch` | Merging two sketches with different parameters |
 
 ### HyperLogLog
@@ -121,7 +121,7 @@ test "CuckooFilter basic" {
 
 | Function | Signature | Description |
 |---|---|---|
-| `CuckooFilter::new` | `(capacity? : Int, bucket_size? : Int) -> CuckooFilter` | Create |
+| `CuckooFilter::new` | `(capacity? : Int, bucket_size? : Int) -> CuckooFilter raise SketchError` | Create |
 | `insert` | `(CuckooFilter, String) -> Bool` | Insert (false if full) |
 | `contains` | `(CuckooFilter, String) -> Bool` | Membership query |
 | `remove` | `(CuckooFilter, String) -> Bool` | Remove (false if not found) |
