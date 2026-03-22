@@ -16,10 +16,15 @@ pub struct CountMinSketch {
 ///
 /// * `width` — number of counters per row (default 1000).
 /// * `depth` — number of hash functions / rows (default 5).
+///
+/// Returns `Err(InvalidDimension)` when `width` or `depth` is not positive.
 pub fn CountMinSketch::new(
   width~ : Int = 1000,
   depth~ : Int = 5
-) -> CountMinSketch {
+) -> CountMinSketch raise SketchError {
+  if width <= 0 || depth <= 0 {
+    raise InvalidDimension
+  }
   let table : Array[Array[Int]] = Array::new()
   for i = 0; i < depth; i = i + 1 {
     table.push(Array::make(width, 0))
@@ -74,7 +79,8 @@ pub fn CountMinSketch::merge(
   if self.width != other.width || self.depth != other.depth {
     raise PrecisionMismatch
   }
-  let result = CountMinSketch::new(width=self.width, depth=self.depth)
+  // width and depth are already validated, so this cannot fail.
+  let result = try! CountMinSketch::new(width=self.width, depth=self.depth)
   for i in 0..<self.depth {
     for j in 0..<self.width {
       result.table[i][j] = self.table[i][j] + other.table[i][j]
