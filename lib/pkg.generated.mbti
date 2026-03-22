@@ -1,0 +1,47 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "hiroyannnn/sketch/lib"
+
+// Values
+pub fn murmurhash3(String, seed? : Int) -> Int
+
+// Errors
+pub(all) suberror SketchError {
+  PrecisionMismatch
+  InvalidPrecision
+  InvalidDimension
+}
+pub impl Show for SketchError
+
+// Types and methods
+pub struct CountMinSketch {
+  // private fields
+}
+pub fn CountMinSketch::add(Self, String, count? : Int) -> Unit
+pub fn CountMinSketch::estimate(Self, String) -> Int
+pub fn CountMinSketch::merge(Self, Self) -> Self raise SketchError
+pub fn CountMinSketch::new(width? : Int, depth? : Int) -> Self raise SketchError
+pub impl Show for CountMinSketch
+
+pub struct CuckooFilter {
+  // private fields
+}
+pub fn CuckooFilter::contains(Self, String) -> Bool
+pub fn CuckooFilter::count(Self) -> Int
+pub fn CuckooFilter::insert(Self, String) -> Bool
+pub fn CuckooFilter::new(capacity? : Int, bucket_size? : Int) -> Self
+pub fn CuckooFilter::remove(Self, String) -> Bool
+pub impl Show for CuckooFilter
+
+pub struct HyperLogLog {
+  // private fields
+}
+pub fn HyperLogLog::add(Self, String) -> Unit
+pub fn HyperLogLog::count(Self) -> Double
+pub fn HyperLogLog::merge(Self, Self) -> Self raise SketchError
+pub fn HyperLogLog::new(precision? : Int) -> Self raise SketchError
+pub impl Show for HyperLogLog
+
+// Type aliases
+
+// Traits
+
