@@ -6,11 +6,11 @@
 ///|
 /// A Cuckoo Filter for approximate set membership testing.
 pub struct CuckooFilter {
-  buckets : Array[Array[Int]]
-  bucket_size : Int
-  num_buckets : Int
-  mut size : Int
-  mut rng_state : Int // xorshift32 state for randomized kick-out
+  priv buckets : Array[Array[Int]]
+  priv bucket_size : Int
+  priv num_buckets : Int
+  priv mut size : Int
+  priv mut rng_state : Int // xorshift32 state for randomized kick-out
 }
 
 ///|

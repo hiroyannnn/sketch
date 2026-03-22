@@ -6,8 +6,8 @@
 ///|
 /// A HyperLogLog cardinality estimator.
 pub struct HyperLogLog {
-  registers : Array[Int]
-  precision : Int
+  priv registers : Array[Int]
+  priv precision : Int
 } derive(Show)
 
 ///|

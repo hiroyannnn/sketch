@@ -14,9 +14,7 @@ pub impl Show for SketchError
 
 // Types and methods
 pub struct CountMinSketch {
-  table : Array[Array[Int]]
-  width : Int
-  depth : Int
+  // private fields
 }
 pub fn CountMinSketch::add(Self, String, count? : Int) -> Unit
 pub fn CountMinSketch::estimate(Self, String) -> Int
@@ -25,11 +23,7 @@ pub fn CountMinSketch::new(width? : Int, depth? : Int) -> Self raise SketchError
 pub impl Show for CountMinSketch
 
 pub struct CuckooFilter {
-  buckets : Array[Array[Int]]
-  bucket_size : Int
-  num_buckets : Int
-  mut size : Int
-  mut rng_state : Int
+  // private fields
 }
 pub fn CuckooFilter::contains(Self, String) -> Bool
 pub fn CuckooFilter::count(Self) -> Int
@@ -38,8 +32,7 @@ pub fn CuckooFilter::new(capacity? : Int, bucket_size? : Int) -> Self
 pub fn CuckooFilter::remove(Self, String) -> Bool
 
 pub struct HyperLogLog {
-  registers : Array[Int]
-  precision : Int
+  // private fields
 }
 pub fn HyperLogLog::add(Self, String) -> Unit
 pub fn HyperLogLog::count(Self) -> Double

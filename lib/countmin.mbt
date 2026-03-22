@@ -6,9 +6,9 @@
 ///|
 /// A Count-Min Sketch frequency estimator.
 pub struct CountMinSketch {
-  table : Array[Array[Int]]
-  width : Int
-  depth : Int
+  priv table : Array[Array[Int]]
+  priv width : Int
+  priv depth : Int
 } derive(Show)
 
 ///|
