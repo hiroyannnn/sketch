@@ -10,6 +10,17 @@ pub struct CuckooFilter {
   bucket_size : Int
   num_buckets : Int
   mut size : Int
+  mut rng_state : Int // xorshift32 state for randomized kick-out
+}
+
+///|
+/// xorshift32 PRNG — advances internal state and returns a pseudo-random Int.
+fn xorshift32(state : Int) -> Int {
+  let mut s = state
+  s = s.lxor(s << 13)
+  s = s.lxor(lsr32(s, 17))
+  s = s.lxor(s << 5)
+  s
 }
 
 ///|
@@ -92,7 +103,7 @@ pub fn CuckooFilter::new(
   for i = 0; i < num_buckets; i = i + 1 {
     buckets.push(Array::make(bucket_size, 0))
   }
-  { buckets, bucket_size, num_buckets, size: 0 }
+  { buckets, bucket_size, num_buckets, size: 0, rng_state: 362436069 }
 }
 
 ///|
@@ -111,11 +122,12 @@ pub fn CuckooFilter::insert(self : CuckooFilter, value : String) -> Bool {
     self.size = self.size + 1
     return true
   }
-  // Kick-out relocation (up to 500 iterations)
+  // Kick-out relocation (up to 500 iterations) with randomized slot selection
   let mut cur_idx = i1
   let mut cur_fp = fp
   for kick = 0; kick < 500; kick = kick + 1 {
-    let slot = kick % self.bucket_size
+    self.rng_state = xorshift32(self.rng_state)
+    let slot = lsr32(self.rng_state, 1) % self.bucket_size
     let evicted = self.buckets[cur_idx][slot]
     self.buckets[cur_idx][slot] = cur_fp
     if evicted == 0 {
