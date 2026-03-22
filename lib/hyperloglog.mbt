@@ -8,7 +8,7 @@
 pub struct HyperLogLog {
   registers : Array[Int]
   precision : Int
-}
+} derive(Show)
 
 ///|
 /// Creates a new `HyperLogLog` with the given `precision` (4–18).

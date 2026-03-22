@@ -9,7 +9,7 @@ pub struct CountMinSketch {
   table : Array[Array[Int]]
   width : Int
   depth : Int
-}
+} derive(Show)
 
 ///|
 /// Creates a new `CountMinSketch`.
