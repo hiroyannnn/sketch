@@ -18,6 +18,16 @@ moon fmt                # Format code
 
 Before committing: `moon info && moon fmt && moon test --target all`
 
+Makefile shortcuts:
+
+```bash
+make test               # moon test --target all
+make check              # moon info + moon fmt + git diff --exit-code
+make release v=0.2.0    # Test → bump version → commit → push → gh release create
+```
+
+Release triggers `release.yml` which runs `moon publish` to mooncakes.io.
+
 ## Architecture
 
 - `lib/` — Core library package
