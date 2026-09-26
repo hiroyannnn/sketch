@@ -1,34 +1,44 @@
 ///|
 test "cuckoo/invalid dimensions" {
-  inspect(try? CuckooFilter::new(capacity=0), content="Err(InvalidDimension)")
-  inspect(try? CuckooFilter::new(capacity=-1), content="Err(InvalidDimension)")
-  inspect(
-    try? CuckooFilter::new(bucket_size=0),
-    content="Err(InvalidDimension)",
-  )
-  inspect(
-    try? CuckooFilter::new(bucket_size=-1),
-    content="Err(InvalidDimension)",
-  )
+  try @lib.CuckooFilter::new(capacity=0) catch {
+    e => inspect(e, content="InvalidDimension")
+  } noraise {
+    _ => fail("expected InvalidDimension")
+  }
+  try @lib.CuckooFilter::new(capacity=-1) catch {
+    e => inspect(e, content="InvalidDimension")
+  } noraise {
+    _ => fail("expected InvalidDimension")
+  }
+  try @lib.CuckooFilter::new(bucket_size=0) catch {
+    e => inspect(e, content="InvalidDimension")
+  } noraise {
+    _ => fail("expected InvalidDimension")
+  }
+  try @lib.CuckooFilter::new(bucket_size=-1) catch {
+    e => inspect(e, content="InvalidDimension")
+  } noraise {
+    _ => fail("expected InvalidDimension")
+  }
 }
 
 ///|
 test "cuckoo/insert and contains" {
-  let cf = try! CuckooFilter::new()
+  let cf = try! @lib.CuckooFilter::new()
   assert_true(cf.insert("hello"))
   assert_true(cf.contains("hello"))
 }
 
 ///|
 test "cuckoo/not contains" {
-  let cf = try! CuckooFilter::new()
+  let cf = try! @lib.CuckooFilter::new()
   cf.insert("hello") |> ignore
   assert_true(!cf.contains("world"))
 }
 
 ///|
 test "cuckoo/remove" {
-  let cf = try! CuckooFilter::new()
+  let cf = try! @lib.CuckooFilter::new()
   cf.insert("hello") |> ignore
   assert_true(cf.contains("hello"))
   assert_true(cf.remove("hello"))
@@ -37,13 +47,13 @@ test "cuckoo/remove" {
 
 ///|
 test "cuckoo/remove non-existent" {
-  let cf = try! CuckooFilter::new()
+  let cf = try! @lib.CuckooFilter::new()
   assert_true(!cf.remove("nothing"))
 }
 
 ///|
 test "cuckoo/count" {
-  let cf = try! CuckooFilter::new()
+  let cf = try! @lib.CuckooFilter::new()
   inspect(cf.count(), content="0")
   cf.insert("a") |> ignore
   cf.insert("b") |> ignore
@@ -53,7 +63,7 @@ test "cuckoo/count" {
 
 ///|
 test "cuckoo/count after remove" {
-  let cf = try! CuckooFilter::new()
+  let cf = try! @lib.CuckooFilter::new()
   cf.insert("x") |> ignore
   cf.insert("y") |> ignore
   cf.remove("x") |> ignore
@@ -62,7 +72,7 @@ test "cuckoo/count after remove" {
 
 ///|
 test "cuckoo/many inserts" {
-  let cf = try! CuckooFilter::new(capacity=2048)
+  let cf = try! @lib.CuckooFilter::new(capacity=2048)
   let mut inserted = 0
   for i in 0..<500 {
     if cf.insert("key-\{i}") {
@@ -86,7 +96,7 @@ test "cuckoo/high load insert success rate" {
   // With randomized kick-out, high-load inserts should succeed more often.
   // Fill to ~85% capacity — deterministic slot selection tends to fail earlier.
   let capacity = 512
-  let cf = try! CuckooFilter::new(capacity~)
+  let cf = try! @lib.CuckooFilter::new(capacity~)
   let target = (capacity.to_double() * 0.85).to_int()
   let mut inserted = 0
   for i in 0..<target {

@@ -1,24 +1,32 @@
 ///|
 test "hyperloglog/invalid precision" {
-  inspect(try? HyperLogLog::new(precision=3), content="Err(InvalidPrecision)")
-  inspect(try? HyperLogLog::new(precision=19), content="Err(InvalidPrecision)")
+  try @lib.HyperLogLog::new(precision=3) catch {
+    e => inspect(e, content="InvalidPrecision")
+  } noraise {
+    _ => fail("expected InvalidPrecision")
+  }
+  try @lib.HyperLogLog::new(precision=19) catch {
+    e => inspect(e, content="InvalidPrecision")
+  } noraise {
+    _ => fail("expected InvalidPrecision")
+  }
 }
 
 ///|
 test "hyperloglog/valid precision boundaries" {
-  let _ = try! HyperLogLog::new(precision=4)
-  let _ = try! HyperLogLog::new(precision=18)
+  let _ = try! @lib.HyperLogLog::new(precision=4)
+  let _ = try! @lib.HyperLogLog::new(precision=18)
 }
 
 ///|
 test "hyperloglog/empty count" {
-  let hll = try! HyperLogLog::new()
+  let hll = try! @lib.HyperLogLog::new()
   inspect(hll.count(), content="0")
 }
 
 ///|
 test "hyperloglog/single element" {
-  let hll = try! HyperLogLog::new()
+  let hll = try! @lib.HyperLogLog::new()
   hll.add("hello")
   let est = hll.count()
   // Single distinct value — expect estimate near 1.0
@@ -27,7 +35,7 @@ test "hyperloglog/single element" {
 
 ///|
 test "hyperloglog/duplicates count as one" {
-  let hll = try! HyperLogLog::new()
+  let hll = try! @lib.HyperLogLog::new()
   for i = 0; i < 100; i = i + 1 {
     hll.add("same")
   }
@@ -38,7 +46,7 @@ test "hyperloglog/duplicates count as one" {
 
 ///|
 test "hyperloglog/cardinality estimate" {
-  let hll = try! HyperLogLog::new()
+  let hll = try! @lib.HyperLogLog::new()
   for i in 0..<1000 {
     hll.add("item-\{i}")
   }
@@ -49,8 +57,8 @@ test "hyperloglog/cardinality estimate" {
 
 ///|
 test "hyperloglog/merge success" {
-  let hll1 = try! HyperLogLog::new()
-  let hll2 = try! HyperLogLog::new()
+  let hll1 = try! @lib.HyperLogLog::new()
+  let hll2 = try! @lib.HyperLogLog::new()
   for i in 0..<500 {
     hll1.add("a-\{i}")
   }
@@ -65,15 +73,19 @@ test "hyperloglog/merge success" {
 
 ///|
 test "hyperloglog/merge precision mismatch" {
-  let hll1 = try! HyperLogLog::new(precision=8)
-  let hll2 = try! HyperLogLog::new(precision=10)
-  inspect(try? hll1.merge(hll2), content="Err(PrecisionMismatch)")
+  let hll1 = try! @lib.HyperLogLog::new(precision=8)
+  let hll2 = try! @lib.HyperLogLog::new(precision=10)
+  try hll1.merge(hll2) catch {
+    e => inspect(e, content="PrecisionMismatch")
+  } noraise {
+    _ => fail("expected PrecisionMismatch")
+  }
 }
 
 ///|
 test "hyperloglog/precision boundary min" {
   // precision=4 → 16 registers. Verify basic cardinality with minimal registers.
-  let hll = try! HyperLogLog::new(precision=4)
+  let hll = try! @lib.HyperLogLog::new(precision=4)
   for i in 0..<100 {
     hll.add("p4-\{i}")
   }
@@ -85,7 +97,7 @@ test "hyperloglog/precision boundary min" {
 ///|
 test "hyperloglog/precision boundary max" {
   // precision=18 → 262144 registers. Should be very accurate.
-  let hll = try! HyperLogLog::new(precision=18)
+  let hll = try! @lib.HyperLogLog::new(precision=18)
   for i in 0..<1000 {
     hll.add("p18-\{i}")
   }
@@ -98,8 +110,8 @@ test "hyperloglog/precision boundary max" {
 test "hyperloglog/different precisions consistent" {
   // The same elements added to different precisions should give
   // estimates in the same order of magnitude.
-  let hll8 = try! HyperLogLog::new(precision=8)
-  let hll12 = try! HyperLogLog::new(precision=12)
+  let hll8 = try! @lib.HyperLogLog::new(precision=8)
+  let hll12 = try! @lib.HyperLogLog::new(precision=12)
   for i in 0..<500 {
     hll8.add("shared-\{i}")
     hll12.add("shared-\{i}")

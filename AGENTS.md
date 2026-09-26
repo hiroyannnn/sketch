@@ -8,7 +8,7 @@ This is a [MoonBit](https://docs.moonbitlang.com) project.
   file listing its dependencies. Each package has its source files and
   blackbox test files (ending in `_test.mbt`).
 
-- In the top-level directory, `moon.mod.json` describes the module and its
+- In the top-level directory, `moon.mod` describes the module and its
   metadata.
 
 ## Coding convention
