@@ -9,7 +9,7 @@ pub struct CountMinSketch {
   priv table : Array[Array[Int]]
   priv width : Int
   priv depth : Int
-} derive(Show)
+}
 
 ///|
 /// Creates a new `CountMinSketch`.
@@ -25,11 +25,11 @@ pub fn CountMinSketch::new(
   if width <= 0 || depth <= 0 {
     raise InvalidDimension
   }
-  let table : Array[Array[Int]] = Array::new()
+  let table : Array[Array[Int]] = []
   for i = 0; i < depth; i = i + 1 {
     table.push(Array::make(width, 0))
   }
-  { table, width, depth }
+  { table, width, depth, }
 }
 
 ///|

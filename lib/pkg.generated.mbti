@@ -10,6 +10,8 @@ pub(all) suberror SketchError {
   InvalidPrecision
   InvalidDimension
 }
+pub fn SketchError::output(Self, &Logger) -> Unit
+pub fn SketchError::to_string(Self) -> String
 pub impl Show for SketchError
 
 // Types and methods
@@ -20,7 +22,6 @@ pub fn CountMinSketch::add(Self, String, count? : Int) -> Unit
 pub fn CountMinSketch::estimate(Self, String) -> Int
 pub fn CountMinSketch::merge(Self, Self) -> Self raise SketchError
 pub fn CountMinSketch::new(width? : Int, depth? : Int) -> Self raise SketchError
-pub impl Show for CountMinSketch
 
 pub struct CuckooFilter {
   // private fields
@@ -30,7 +31,6 @@ pub fn CuckooFilter::count(Self) -> Int
 pub fn CuckooFilter::insert(Self, String) -> Bool
 pub fn CuckooFilter::new(capacity? : Int, bucket_size? : Int) -> Self raise SketchError
 pub fn CuckooFilter::remove(Self, String) -> Bool
-pub impl Show for CuckooFilter
 
 pub struct HyperLogLog {
   // private fields
@@ -39,9 +39,7 @@ pub fn HyperLogLog::add(Self, String) -> Unit
 pub fn HyperLogLog::count(Self) -> Double
 pub fn HyperLogLog::merge(Self, Self) -> Self raise SketchError
 pub fn HyperLogLog::new(precision? : Int) -> Self raise SketchError
-pub impl Show for HyperLogLog
 
 // Type aliases
 
 // Traits
-

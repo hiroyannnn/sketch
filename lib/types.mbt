@@ -11,10 +11,13 @@ pub(all) suberror SketchError {
 }
 
 ///|
-pub impl Show for SketchError with output(self, logger) {
+pub impl Show for SketchError with fn output(self, logger) {
   match self {
     PrecisionMismatch => logger.write_string("PrecisionMismatch")
     InvalidPrecision => logger.write_string("InvalidPrecision")
     InvalidDimension => logger.write_string("InvalidDimension")
   }
 }
+
+///|
+pub extend SketchError with Show::{to_string, output}

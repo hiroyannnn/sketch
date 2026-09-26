@@ -13,7 +13,7 @@ Import in `moon.pkg`:
 
 ```
 import {
-  "hiroyannnn/sketch" @sketch,
+  "hiroyannnn/sketch",
 }
 ```
 
@@ -21,7 +21,7 @@ import {
 
 ### HyperLogLog — cardinality estimation
 
-```mbt nocheck
+```mbt check
 ///|
 test "HyperLogLog basic" {
   let hll = try! @sketch.HyperLogLog::new()
@@ -45,16 +45,17 @@ test "HyperLogLog merge" {
 
 ///|
 test "HyperLogLog invalid precision" {
-  inspect(
-    try? @sketch.HyperLogLog::new(precision=3),
-    content="Err(InvalidPrecision)",
-  )
+  try @sketch.HyperLogLog::new(precision=3) catch {
+    e => inspect(e, content="InvalidPrecision")
+  } noraise {
+    _ => fail("expected InvalidPrecision")
+  }
 }
 ```
 
 ### Count-Min Sketch — frequency estimation
 
-```mbt nocheck
+```mbt check
 ///|
 test "CountMinSketch basic" {
   let cm = try! @sketch.CountMinSketch::new()
@@ -77,7 +78,7 @@ test "CountMinSketch merge" {
 
 ### Cuckoo Filter — set membership
 
-```mbt nocheck
+```mbt check
 ///|
 test "CuckooFilter basic" {
   let cf = @sketch.CuckooFilter::new()

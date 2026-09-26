@@ -8,7 +8,7 @@
 pub struct HyperLogLog {
   priv registers : Array[Int]
   priv precision : Int
-} derive(Show)
+}
 
 ///|
 /// Creates a new `HyperLogLog` with the given `precision` (4–18).
@@ -22,7 +22,7 @@ pub fn HyperLogLog::new(precision? : Int = 14) -> HyperLogLog raise SketchError 
     raise InvalidPrecision
   }
   let m = 1 << precision
-  { registers: Array::make(m, 0), precision }
+  { registers: Array::make(m, 0), precision, }
 }
 
 ///|
@@ -103,7 +103,7 @@ pub fn HyperLogLog::merge(
     raise PrecisionMismatch
   }
   let m = self.registers.length()
-  let result = { registers: Array::make(m, 0), precision: self.precision }
+  let result = { registers: Array::make(m, 0), precision: self.precision, }
   for i in 0..<m {
     let a = self.registers[i]
     let b = other.registers[i]

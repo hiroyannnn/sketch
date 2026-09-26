@@ -11,7 +11,7 @@ pub struct CuckooFilter {
   priv num_buckets : Int
   priv mut size : Int
   priv mut rng_state : Int // xorshift32 state for randomized kick-out
-} derive(Show)
+}
 
 ///|
 /// xorshift32 PRNG — advances internal state and returns a pseudo-random Int.
@@ -108,11 +108,11 @@ pub fn CuckooFilter::new(
   }
   let nb = if capacity / bucket_size > 0 { capacity / bucket_size } else { 1 }
   let num_buckets = next_power_of_two(nb)
-  let buckets : Array[Array[Int]] = Array::new()
+  let buckets : Array[Array[Int]] = []
   for i = 0; i < num_buckets; i = i + 1 {
     buckets.push(Array::make(bucket_size, 0))
   }
-  { buckets, bucket_size, num_buckets, size: 0, rng_state: 362436069 }
+  { buckets, bucket_size, num_buckets, size: 0, rng_state: 362436069, }
 }
 
 ///|

@@ -38,7 +38,7 @@ Release triggers `release.yml` which runs `moon publish` to mooncakes.io.
   - `types.mbt` — `SketchError` suberror type
   - `*_test.mbt` — Blackbox tests for each data structure
 - `top.mbt` — Re-exports public types via `pub using @lib { ... }`
-- `moon.mod.json` — Module metadata (name: `hiroyannnn/sketch`)
+- `moon.mod` — Module metadata (name: `hiroyannnn/sketch`)
 
 All struct fields are `priv` — construction only via `::new()` factory methods.
 
